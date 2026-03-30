@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.sdcps</groupId>
+    <artifactId>sdcps-core</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <evora.version>1.0-SNAPSHOT</evora.version>
+        <m4t.version>1.0.4-Beryllium-SR4</m4t.version>
+        <sendim.version>1.0.0-SNAPSHOT</sendim.version>
+        <smart.version>1.0-SNAPSHOT</smart.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>opendaylight-release</id>
+            <url>https://nexus.opendaylight.org/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>opendaylight-snapshot</id>
+            <url>https://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Messaging4Transport -->
+        <dependency>
+            <groupId>org.opendaylight.messaging4transport</groupId>
+            <artifactId>messaging4transport-impl</artifactId>
+            <version>${m4t.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.opendaylight.mdsal</groupId>
+                    <artifactId>mdsal-binding-dom-adapter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Evora (Mayan) -->
+        <dependency>
+            <groupId>sd</groupId>
+            <artifactId>cps</artifactId>
+            <version>${evora.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- SENDIM -->
+        <dependency>
+            <groupId>org.sendim</groupId>
+            <artifactId>sendim-core</artifactId>
+            <version>${sendim.version}</version>
+        </dependency>
+
+        <!-- SMART -->
+        <dependency>
+            <groupId>org.smart</groupId>
+            <artifactId>smart-api</artifactId>
+            <version>${smart.version}</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.11</version>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>lean-dev</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <optimize>true</optimize>
+                            <debug>false</debug>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

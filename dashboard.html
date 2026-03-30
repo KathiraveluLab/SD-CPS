@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SD-CPS Research Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.05);
+            --bg: #0a0b10;
+            --accent: #00f2ff;
+            --danger: #ff0055;
+            --success: #00ff88;
+        }
+        body {
+            background-color: var(--bg);
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #1a1b25 0%, #0a0b10 100%);
+        }
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        .header-title {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .alert-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .alert-item {
+            border-left: 4px solid var(--danger);
+            background: rgba(255, 0, 85, 0.1);
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success-item {
+            border-left: 4px solid var(--success);
+            background: rgba(0, 255, 136, 0.1);
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .node-pill {
+            display: inline-block;
+            padding: 5px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid var(--accent);
+            font-size: 0.8rem;
+        }
+        .topology-map {
+            height: 300px;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            border-radius: 8px;
+            position: relative;
+        }
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark py-4">
+        <div class="container">
+            <h1 class="header-title m-0">SD-CPS RESEARCH DASHBOARD</h1>
+            <span class="badge bg-danger pulse">LIVE SIMULATION MODE</span>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Key Metrics -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="glass-card">
+                    <div class="text-muted small">ACTIVE NODES</div>
+                    <div class="stat-value" id="nodeCount">12</div>
+                    <div class="small text-success">[UP] Cluster Computing 2019 Parity</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card">
+                    <div class="text-muted small">RESEARCH CASE STUDIES</div>
+                    <div class="stat-value" id="caseCount">8 / 8</div>
+                    <div class="small text-info">100% Functional Parity</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card">
+                    <div class="text-muted small">TENANT ISOLATION</div>
+                    <div class="stat-value" id="tenantStatus">ACTIVE</div>
+                    <div class="small text-warning">Namespace Partitioned</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card">
+                    <div class="text-muted small">SYSTEM UPTIME</div>
+                    <div class="stat-value" id="uptime">99.9%</div>
+                    <div class="small text-danger">HA Failover Verified</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left: Topology & Nodes -->
+            <div class="col-lg-8">
+                <div class="glass-card mb-4">
+                    <h5 class="header-title mb-4">INDUSTRIAL EDGE TOPOLOGY</h5>
+                    <div class="topology-map d-flex flex-wrap align-content-center justify-content-center">
+                        <!-- Simulated Nodes -->
+                        <div class="node-pill">n9: 100W</div>
+                        <div class="node-pill text-danger">n6: 50W (HOT)</div>
+                        <div class="node-pill">n7: 150W</div>
+                        <div class="node-pill">n8: 120W</div>
+                        <div class="node-pill text-danger">n10: 30W (LOW)</div>
+                        <div class="node-pill">n11: 80W</div>
+                        <div class="node-pill">n12: 90W</div>
+                        <div class="node-pill">n13: 110W</div>
+                    </div>
+                </div>
+                <div class="glass-card">
+                    <h5 class="header-title mb-4">TENANT SERVICE REGISTRY</h5>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover small">
+                            <thead>
+                                <tr>
+                                    <th>Tenant</th>
+                                    <th>Service</th>
+                                    <th>Energy Req</th>
+                                    <th>Real-Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>UserA</td>
+                                    <td>s5</td>
+                                    <td>5.0W</td>
+                                    <td>YES</td>
+                                    <td><span class="text-success">ORCHESTRATED</span></td>
+                                </tr>
+                                <tr>
+                                    <td>UserA</td>
+                                    <td>s_heavy</td>
+                                    <td>200.0W</td>
+                                    <td>YES</td>
+                                    <td><span class="text-danger">BLOCKED (THERMAL)</span></td>
+                                </tr>
+                                <tr>
+                                    <td>UserB</td>
+                                    <td>s6</td>
+                                    <td>3.0W</td>
+                                    <td>NO</td>
+                                    <td><span class="text-success">ORCHESTRATED</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Alerts & Logs -->
+            <div class="col-lg-4">
+                <div class="glass-card">
+                    <h5 class="header-title mb-4">LIVE RESEARCH ALERTS</h5>
+                    <div class="alert-feed">
+                        <div class="alert-item">
+                            <strong class="text-danger">THERMAL BREACH</strong><br>
+                            <small class="text-muted">Node n10 capacity 30W < s_heavy 200W</small>
+                        </div>
+                        <div class="alert-item">
+                            <strong class="text-danger">SECURITY BREACH</strong><br>
+                            <small class="text-muted">UserB attempted access to UserA:s5</small>
+                        </div>
+                        <div class="success-item">
+                            <strong class="text-success">FAILOVER COMPLETED</strong><br>
+                            <small class="text-muted">Backup Orchestrator promoted to Primary</small>
+                        </div>
+                        <div class="success-item">
+                            <strong class="text-success">ADAPTATION TRIGGERED</strong><br>
+                            <small class="text-muted">SMART: CLONE s5 due to n10 congestion</small>
+                        </div>
+                        <div class="alert-item">
+                            <strong class="text-danger">NODE CRASH (CHAOS)</strong><br>
+                            <small class="text-muted">Edge Node n10 HA Failure detected</small>
+                        </div>
+                        <div class="success-item">
+                            <strong class="text-success">SELF-HEALING SUCCESS</strong><br>
+                            <small class="text-muted">Migrated affected s5 from n10 to healthy node</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        SD-CPS Framework | Research Parity SDS 2017 & Cluster Computing 2019 | KathiraveluLab
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

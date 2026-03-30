@@ -1,0 +1,1 @@
+public class DebugPrivacy { public static void main(String[] args) { String msg = "flow_node_n12 [COMPLIANT: Privacy-by-Design]"; System.out.println("Contains [COMPLIANT]: " + msg.contains("[COMPLIANT]")); } }
