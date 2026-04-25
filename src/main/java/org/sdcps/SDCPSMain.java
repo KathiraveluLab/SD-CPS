@@ -123,18 +123,20 @@ public class SDCPSMain {
             case 5:
                 logger.info("\n--- Starting Case Study 5: Control Plane Clustering & HA (SDS 2017) ---");
                 org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("danger", "CRITICAL: Primary Orchestrator Crash.");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().updateUptime("94.2%");
                 SDCPSClusterManager.getInstance().electLeader("Primary-Node");
                 SDCPSRegistry backupRegistry = new SDCPSRegistry(true);
-                SDCPSOrchestrator backup = new SDCPSOrchestrator(topology, backupRegistry);
-                backup.setPrimary(false);
+                SDCPSOrchestrator backupOrch = new SDCPSOrchestrator(topology, backupRegistry);
+                backupOrch.setPrimary(false);
                 logger.info("Simulating Primary Orchestrator CRASH...");
                 logger.error("CRITICAL: Primary Orchestrator is UNREACHABLE.");
                 logger.info("Backup Orchestrator detecting heartbeat failure... Initiating FAILOVER.");
-                backup.failover();
+                backupOrch.failover();
+                org.sdcps.knowledge.DashboardGenerator.getInstance().updateUptime("99.9%");
                 SDCPSClusterManager.getInstance().electLeader("Backup-Node");
-                backup.joinClusterAndSync();
+                backupOrch.joinClusterAndSync();
                 logger.info("Backup Orchestrator (now Primary) resuming NSC placement with SYNCED STATE...");
-                backup.solve("UserA", nsc, policy);
+                backupOrch.solve("UserA", nsc, policy);
                 org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "HA FAILOVER: Backup promoted to Primary.");
                 break;
             case 6:
@@ -178,7 +180,8 @@ public class SDCPSMain {
         logger.info("Entering SD-CPS Interactive Mode...");
         SDCPSTopology topology = new SDCPSTopology();
         topology.buildResearchTopology();
-        SDCPSOrchestrator orchestrator = new SDCPSOrchestrator(topology);
+        SDCPSRegistry registry = SDCPSRegistry.getInstance();
+        SDCPSOrchestrator orchestrator = new SDCPSOrchestrator(topology, registry);
         CPSNodeSimulator simulator = new CPSNodeSimulator();
         java.util.Scanner scanner = new java.util.Scanner(System.in);
 
@@ -202,6 +205,42 @@ public class SDCPSMain {
                             System.out.printf(" - %s: Energy=%.1fW, Latency=%.1fms, Cost=%.1f\n", 
                                 id, topology.getEnergyCapacity(id), node.getLatency(), node.getCost());
                         });
+                        break;
+                    case "addnode":
+                        if (parts.length < 5) { System.out.println("Usage: addnode <id> <energyW> <latency> <cost> (Example: addnode n18 100.0 4.0 12.0)"); break; }
+                        double eCap = Double.parseDouble(parts[2]);
+                        double lat = Double.parseDouble(parts[3]);
+                        double cost = Double.parseDouble(parts[4]);
+                        topology.addNodeWithEnergy(new org.evora.core.Node(parts[1], new String[]{}, new String[]{}, cost, lat, 100.0), eCap);
+                        org.sdcps.knowledge.DashboardGenerator.getInstance().updateNodeStatus(parts[1], "NORMAL");
+                        System.out.println("Node " + parts[1] + " added to topology and dashboard.");
+                        break;
+                    case "users":
+                        System.out.println("\nRegistered Tenants and Services:");
+                        registry.getAllTenants().forEach((tenant, services) -> {
+                            System.out.println(" [" + tenant + "]");
+                            services.forEach((sid, meta) -> {
+                                System.out.printf("   - %s: %sW, RT=%s\n", sid, meta.getEnergyConstraint(), meta.isRealTime());
+                            });
+                        });
+                        if (registry.getAllTenants().isEmpty()) System.out.println(" No tenants registered.");
+                        break;
+                    case "services":
+                        System.out.println("\nRegistered CPS Services (All Tenants):");
+                        registry.getAllTenants().forEach((tenant, services) -> {
+                            services.forEach((sid, meta) -> {
+                                System.out.printf(" - %s [Tenant: %s]: %sW, RT=%s\n", 
+                                    sid, tenant, meta.getEnergyConstraint(), meta.isRealTime());
+                            });
+                        });
+                        if (registry.getAllTenants().isEmpty()) System.out.println(" No services registered.");
+                        break;
+                    case "register":
+                        if (parts.length < 5) { System.out.println("Usage: register <tenant> <service> <energyW> <isRT> (Example: register UserA s5 10.0 true)"); break; }
+                        double energy = Double.parseDouble(parts[3]);
+                        boolean rt = Boolean.parseBoolean(parts[4]);
+                        registry.registerCPSService(parts[1], parts[2], energy, rt);
+                        System.out.println("Service registered and reported to dashboard.");
                         break;
                     case "crash":
                         if (parts.length < 2) { System.out.println("Usage: crash <node> (Example: crash n10)"); break; }
@@ -240,6 +279,10 @@ public class SDCPSMain {
         System.out.println("\nSD-CPS Interactive Shell");
         System.out.println("Usage & Examples:");
         System.out.println("  nodes                             - List all edge nodes and their current metrics");
+        System.out.println("  addnode <id> <W> <lat> <cost>     - e.g., addnode n18 100.0 4.0 12.0");
+        System.out.println("  users                             - List all registered tenants and their services");
+        System.out.println("  services                          - List all registered services and metadata");
+        System.out.println("  register <tenant> <service> <W> <RT> - e.g., register UserA s5 10.0 true");
         System.out.println("  crash <node>                      - e.g., crash n10");
         System.out.println("  congestion <node>                 - e.g., congestion n12");
         System.out.println("  jitter <n1> <n2> <ms>             - e.g., jitter n10 n12 50");

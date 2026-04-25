@@ -13,7 +13,10 @@ public class M4TPublisher {
     public void publish(String topic, String message) {
         logger.info("M4T Data Plane: Attempting to publish to topic [{}]", topic);
         
-        if (!isBrokerReachable()) {
+        boolean reachable = isBrokerReachable();
+        org.sdcps.knowledge.DashboardGenerator.getInstance().updateBrokerStatus(reachable);
+
+        if (!reachable) {
             logger.warn("M4T Messaging Skipped: AMQP Broker not detected at localhost:5672. (Check parity log for recovery).");
             return;
         }

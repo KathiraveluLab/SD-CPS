@@ -54,6 +54,10 @@ public class SDCPSRegistry {
         tenantMetadataMap.put(tenantId, new HashMap<>(services));
     }
 
+    public Map<String, Map<String, CPSMetadata>> getAllTenants() {
+        return tenantMetadataMap;
+    }
+
     public CPSMetadata getMetadata(String tenantId, String serviceId) {
         Map<String, CPSMetadata> services = tenantMetadataMap.get(tenantId);
         return (services != null) ? services.get(serviceId) : null;

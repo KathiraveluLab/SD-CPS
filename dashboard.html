@@ -44,6 +44,9 @@
             font-weight: 700;
             color: #fff;
         }
+        .text-muted {
+            color: #aaa !important;
+        }
         .alert-feed {
             max-height: 400px;
             overflow-y: auto;
@@ -89,7 +92,7 @@
 <body>
     <nav class="navbar navbar-dark py-4">
         <div class="container">
-            <h1 class="header-title m-0">SD-CPS RESEARCH DASHBOARD</h1>
+            <h1 class="header-title m-0">SD-CPS DASHBOARD</h1>
             <span class="badge bg-danger pulse">LIVE SIMULATION MODE</span>
         </div>
     </nav>
@@ -100,21 +103,21 @@
             <div class="col-md-3">
                 <div class="glass-card">
                     <div class="text-muted small">ACTIVE NODES</div>
-                    <div class="stat-value" id="nodeCount">12</div>
-                    <div class="small text-success">[UP] Cluster Computing 2019 Parity</div>
+                    <div class="stat-value" id="nodeCount">--</div>
+                    <div class="small text-success">Nodes Online</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="glass-card">
-                    <div class="text-muted small">RESEARCH CASE STUDIES</div>
-                    <div class="stat-value" id="caseCount">8 / 8</div>
-                    <div class="small text-info">100% Functional Parity</div>
+                    <div class="text-muted small">M4T BROKER STATUS</div>
+                    <div class="stat-value" id="brokerStatus">--</div>
+                    <div class="small text-info">Messaging4Transport</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="glass-card">
                     <div class="text-muted small">TENANT ISOLATION</div>
-                    <div class="stat-value" id="tenantStatus">ACTIVE</div>
+                    <div class="stat-value" id="tenantStatus">--</div>
                     <div class="small text-warning">Namespace Partitioned</div>
                 </div>
             </div>
@@ -177,6 +180,13 @@
             if (typeof dashboardData !== 'undefined') {
                 document.getElementById('nodeCount').innerText = dashboardData.nodeCount;
                 document.getElementById('uptime').innerText = dashboardData.uptime;
+                document.getElementById('tenantStatus').innerText = dashboardData.tenantStatus;
+                
+                const brokerElem = document.getElementById('brokerStatus');
+                if (brokerElem) {
+                    brokerElem.innerText = dashboardData.brokerStatus;
+                    brokerElem.className = 'stat-value ' + (dashboardData.brokerStatus === 'ONLINE' ? 'text-success' : 'text-danger');
+                }
                 const statusBadge = document.querySelector('.badge');
                 if (statusBadge && dashboardData.lastUpdate) {
                     statusBadge.innerText = 'SYNCED: ' + dashboardData.lastUpdate;

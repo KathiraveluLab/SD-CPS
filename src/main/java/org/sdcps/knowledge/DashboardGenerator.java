@@ -23,13 +23,24 @@ public class DashboardGenerator {
             this.tenant = t; this.service = s; this.energy = e; this.realTime = rt; this.status = st;
         }
     }
-    private int activeNodes = 12;
     private String systemUptime = "99.9%";
+    private String tenantIsolationStatus = "ACTIVE";
+    private String brokerStatus = "OFFLINE";
 
     private DashboardGenerator() {
         // Initialize nodes with default status
         for (int i = 6; i <= 17; i++) nodeStatuses.put("n" + i, "NORMAL");
         alerts.add("<div class='success-item'><strong>SYSTEM BOOTSTRAP</strong><br><small>SD-CPS Research Framework initialized.</small></div>");
+        
+        // Background Probe for M4T Broker
+        java.util.concurrent.Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            try (java.net.Socket socket = new java.net.Socket()) {
+                socket.connect(new java.net.InetSocketAddress("localhost", 5672), 100);
+                this.updateBrokerStatus(true);
+            } catch (java.io.IOException e) {
+                this.updateBrokerStatus(false);
+            }
+        }, 0, 10, java.util.concurrent.TimeUnit.SECONDS);
     }
 
     public static DashboardGenerator getInstance() {
@@ -50,6 +61,16 @@ public class DashboardGenerator {
         updateDashboard();
     }
 
+    public void updateUptime(String uptime) {
+        this.systemUptime = uptime;
+        updateDashboard();
+    }
+
+    public void updateBrokerStatus(boolean online) {
+        this.brokerStatus = online ? "ONLINE" : "OFFLINE";
+        updateDashboard();
+    }
+
     public void addAlert(String type, String message) {
         String cssClass = type.equalsIgnoreCase("success") ? "success-item" : "alert-item";
         String alertTitle = type.toUpperCase();
@@ -58,16 +79,16 @@ public class DashboardGenerator {
         updateDashboard();
     }
 
-    public void updateNodeCount(int count) {
-        this.activeNodes = count;
-        updateDashboard();
-    }
-
     public void updateDashboard() {
         try (PrintWriter out = new PrintWriter(new FileWriter("dashboard_data.js"))) {
+            long tenantCount = services.stream().map(s -> s.tenant).distinct().count();
+            String isolationStr = tenantCount <= 1 ? "ACTIVE" : tenantCount + " NAMESPACES";
+            
             out.println("const dashboardData = {");
-            out.println("  nodeCount: " + activeNodes + ",");
+            out.println("  nodeCount: " + nodeStatuses.size() + ",");
             out.println("  uptime: \"" + systemUptime + "\",");
+            out.println("  tenantStatus: \"" + isolationStr + "\",");
+            out.println("  brokerStatus: \"" + brokerStatus + "\",");
             out.println("  lastUpdate: \"" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss")) + "\",");
             out.println("  nodeStatuses: {");
             int j = 0;

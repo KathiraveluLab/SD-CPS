@@ -27,11 +27,19 @@ Open the visual dashboard to monitor simulation events. The dashboard is **dynam
 ```
 *Note: The dashboard auto-refreshes to show events like node crashes and adaptations as they occur.*
 
-### 3. Run Interactively
+### 3. Interactive CLI Shell
 Trigger manual simulation events and observe system adaptation in the logs and dashboard:
 ```bash
 ./sdcps.sh interactive
 ```
+*Available Commands:*
+- `nodes`: List edge node metrics.
+- `register`: Onboard new tenants and services.
+- `crash <node>`: Simulates hardware failure and triggers self-healing.
+- `congestion <node>`: Triggers SMART subflow cloning.
+
+### Documentation
+See the [USER-GUIDE.md](USER-GUIDE.md) for a full command reference and research dashboard walkthrough.
 *Available Commands:*
 - `crash <node>`: Simulates hardware failure and triggers self-healing.
 - `congestion <node>`: Triggers SMART subflow cloning for elephant flows.
