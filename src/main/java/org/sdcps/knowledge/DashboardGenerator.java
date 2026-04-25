@@ -14,6 +14,7 @@ public class DashboardGenerator {
     private List<String> alerts = new ArrayList<>();
     private List<ServiceEntry> services = new ArrayList<>();
     private java.util.Map<String, String> nodeStatuses = new java.util.TreeMap<>();
+    private java.util.concurrent.ScheduledExecutorService scheduler;
 
     public static class ServiceEntry {
         public String tenant, service, status;
@@ -33,11 +34,13 @@ public class DashboardGenerator {
         alerts.add("<div class='success-item'><strong>SYSTEM BOOTSTRAP</strong><br><small>SD-CPS Framework initialized.</small></div>");
         
         // Background Probe for M4T Broker
-        java.util.concurrent.Executors.newSingleThreadScheduledExecutor(r -> {
+        scheduler = java.util.concurrent.Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r);
             t.setDaemon(true);
             return t;
-        }).scheduleAtFixedRate(() -> {
+        });
+        
+        scheduler.scheduleAtFixedRate(() -> {
             try (java.net.Socket socket = new java.net.Socket()) {
                 socket.connect(new java.net.InetSocketAddress("localhost", 5672), 100);
                 this.updateBrokerStatus(true);
@@ -52,6 +55,12 @@ public class DashboardGenerator {
             instance = new DashboardGenerator();
         }
         return instance;
+    }
+
+    public void shutdown() {
+        if (scheduler != null) {
+            scheduler.shutdownNow();
+        }
     }
 
     public void updateNodeStatus(String nodeId, String status) {

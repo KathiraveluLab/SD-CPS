@@ -22,7 +22,6 @@ public class SDCPSMain {
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("interactive")) {
                 runInteractiveMode();
-                return;
             } else if (args[0].equalsIgnoreCase("--case") && args.length > 1) {
                 try {
                     int caseNum = Integer.parseInt(args[1]);
@@ -30,16 +29,19 @@ public class SDCPSMain {
                 } catch (NumberFormatException e) {
                     logger.error("Invalid case number: {}", args[1]);
                 }
-                return;
             } else if (args[0].equalsIgnoreCase("--list")) {
                 printCaseStudies();
-                return;
             } else if (args[0].equalsIgnoreCase("--help")) {
                 printHelp();
-                return;
+            } else {
+                runAllCaseStudies();
             }
+        } else {
+            runAllCaseStudies();
         }
-        runAllCaseStudies();
+        
+        // Final cleanup to ensure Maven exec:java shuts down cleanly
+        org.sdcps.knowledge.DashboardGenerator.getInstance().shutdown();
     }
 
     private static void printHelp() {
