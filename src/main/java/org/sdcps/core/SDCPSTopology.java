@@ -42,23 +42,41 @@ public class SDCPSTopology {
     }
 
     /**
-     * Build the 12-node topology from the 2019 paper.
+     * Build the topology. Now loads from topology.json.
      */
     public void buildResearchTopology() {
-        logger.info("Building 12-node topology from Cluster Computing 2019 paper...");
-        // Replicating industrial automation topology with energy constraints (Watts)
-        addNodeWithEnergy(new Node("n9", new String[]{"n6"}, new String[] {"s4"}, 12.0, 4.0, 150.0), 100.0);
-        addNodeWithEnergy(new Node("n6", new String[]{"n9", "n7"}, new String[] {"s2", "s3", "S4"}, 15.0, 3.0, 200.0), 50.0); // Low energy (thermal)
-        addNodeWithEnergy(new Node("n7", new String[]{"n6", "n8"}, new String[] {"s3", "S1"}, 8.0, 6.0, 80.0), 150.0);
-        addNodeWithEnergy(new Node("n8", new String[]{"n7", "n10"}, new String[] {"s2"}, 10.0, 5.0, 100.0), 120.0);
-        addNodeWithEnergy(new Node("n10", new String[]{"n8", "n11", "n12"}, new String[] {"s5", "s_heavy"}, 20.0, 2.0, 300.0), 30.0); // Low energy (vulnerable)
-        addNodeWithEnergy(new Node("n11", new String[]{"n10", "n12", "n13"}, new String[] {"s1"}, 14.0, 4.0, 120.0), 80.0);
-        addNodeWithEnergy(new Node("n12", new String[]{"n10", "n11"}, new String[] {"s3", "s4"}, 11.0, 4.5, 110.0), 90.0);
-        addNodeWithEnergy(new Node("n13", new String[]{"n11", "n15"}, new String[] {"s2"}, 9.0, 5.5, 90.0), 110.0);
-        addNodeWithEnergy(new Node("n15", new String[]{"n13", "n14", "n16", "n17"}, new String[] {"s1"}, 18.0, 2.5, 250.0), 70.0);
-        addNodeWithEnergy(new Node("n14", new String[]{"n15"}, new String[] {"s2"}, 7.0, 7.0, 70.0), 130.0);
-        addNodeWithEnergy(new Node("n17", new String[]{"n15"}, new String[] {"s2"}, 10.0, 5.0, 100.0), 140.0);
-        addNodeWithEnergy(new Node("n16", new String[]{"n15"}, new String[] {"s3", "s4"}, 13.0, 3.5, 140.0), 160.0);
+        java.io.File file = new java.io.File("topology.json");
+        if (!file.exists()) {
+            logger.warn("topology.json not found! Using emergency hardcoded default (n9).");
+            addNodeWithEnergy(new Node("n9", new String[]{}, new String[] {}, 12.0, 4.0, 150.0), 100.0);
+            return;
+        }
+
+        try (java.io.FileReader reader = new java.io.FileReader(file)) {
+            com.google.gson.JsonArray array = com.google.gson.JsonParser.parseReader(reader).getAsJsonArray();
+            logger.info("Loading {} nodes from topology.json...", array.size());
+            
+            for (com.google.gson.JsonElement el : array) {
+                com.google.gson.JsonObject obj = el.getAsJsonObject();
+                String id = obj.get("id").getAsString();
+                double cost = obj.get("cost").getAsDouble();
+                double lat = obj.get("latency").getAsDouble();
+                double res = obj.get("resources").getAsDouble();
+                double energy = obj.get("energy").getAsDouble();
+                
+                com.google.gson.JsonArray neighArr = obj.getAsJsonArray("neighbors");
+                String[] neighbors = new String[neighArr.size()];
+                for (int i = 0; i < neighArr.size(); i++) neighbors[i] = neighArr.get(i).getAsString();
+                
+                com.google.gson.JsonArray servArr = obj.getAsJsonArray("services");
+                String[] services = new String[servArr.size()];
+                for (int i = 0; i < servArr.size(); i++) services[i] = servArr.get(i).getAsString();
+                
+                addNodeWithEnergy(new Node(id, neighbors, services, cost, lat, res), energy);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to load topology.json: {}", e.getMessage());
+        }
         
         // Linking latencies (ms)
         nodes.get("n10").addNeighborLatency("n12", 2.0);

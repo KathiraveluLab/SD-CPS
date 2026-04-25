@@ -15,7 +15,7 @@ The interactive shell allows you to manually trigger events and manage the Contr
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `nodes` | List all 12+ edge nodes and their current metrics (Energy, Latency). | `nodes` |
+| `nodes` | List all operational edge nodes and their current metrics (Energy, Latency). | `nodes` |
 | `addnode` | Scale the topology by adding a new edge node with energy constraints. | `addnode n18 100.0 4.0 12.0` |
 | `users` | List all registered tenants (users) and their assigned services. | `users` |
 | `services` | Flattened list of all registered services and their CPS metadata. | `services` |
@@ -28,7 +28,25 @@ The interactive shell allows you to manually trigger events and manage the Contr
 
 ---
 
-## 2. Live Research Dashboard
+## 2. Topology Configuration (`topology.json`)
+
+Inside the project root, you will find `topology.json`. This file allows you to define the base edge network without modifying the source code.
+
+### Schema
+Each node in the JSON array supports the following parameters:
+- `id`: Unique identifier for the node (e.g., `n9`).
+- `neighbors`: List of adjacent node IDs.
+- `services`: Default services hosted by this node.
+- `energy`: Thermal/Energy capacity in Watts.
+- `latency`: Base network latency in ms.
+- `cost`: Operational cost of the node.
+- `resources`: CPU/Resource capacity.
+
+Changes made to this file take effect upon the next framework launch.
+
+---
+
+## 3. Live Research Dashboard
 
 ![SD-CPS Dashboard Interface](img/dashboard.png)
 

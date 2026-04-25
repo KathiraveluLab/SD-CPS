@@ -33,8 +33,9 @@ Trigger manual simulation events and observe system adaptation in the logs and d
 ./sdcps.sh interactive
 ```
 *Available Commands:*
-- `nodes`: List edge node metrics.
+- `nodes`: List edge node metrics and energy constraints.
 - `register`: Onboard new tenants and services.
+- `addnode`: Scale the topology with new nodes.
 - `crash <node>`: Simulates hardware failure and triggers self-healing.
 - `congestion <node>`: Triggers SMART subflow cloning.
 
