@@ -66,6 +66,7 @@ public class SDCPSMain {
         System.out.println("7. Empirical Validation: 1000+ iteration simulation with 95% Confidence Intervals.");
         System.out.println("8. Chaos Engineering (SDS 2017): Automated self-healing after node crashes.");
         System.out.println("9. Privacy-by-Design: Automated PII masking and telemetry anonymization.");
+        System.out.println("10. VANET V2X Deployment: Prototypical VANET with V2V, V2I, and I2V communications.");
         System.out.println("");
     }
 
@@ -170,6 +171,29 @@ public class SDCPSMain {
                 String compliantFlowId = new PrivacyGuard().anonymize("flow_node_n12");
                 orchestrator.detectAndAdapt("UserA", compliantFlowId, "n12", "s7");
                 org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "PRIVACY: Telemetry anonymized and accepted.");
+                break;
+            case 10:
+                logger.info("\n--- Starting Case Study 10: Prototypical VANET Deployment (SDS 2017) ---");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("warning", "VANET: Initializing V2X Communication layer.");
+                
+                // Register VANET Specific Services
+                registry.registerCPSService("Vehicle-Alpha", "V2V-Safety", 2.0, true);
+                registry.registerCPSService("Vehicle-Beta", "V2I-Telemetry", 5.0, false);
+                registry.registerCPSService("Infrastructure-City", "I2V-TrafficAlert", 10.0, true);
+                
+                logger.info("Simulating V2V Safety Message broadcast from Vehicle-Alpha...");
+                orchestrator.solve("Vehicle-Alpha", new String[]{"V2V-Safety"}, policy);
+                
+                logger.info("Simulating V2I Telemetry upload to RSU [n15]...");
+                orchestrator.solve("Vehicle-Beta", new String[]{"V2I-Telemetry"}, policy);
+                
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("danger", "EVENT: Roadside Accident detected by Vehicle-Alpha.");
+                logger.warn("V2V Alert: Emergency Braking signal received by nearby vehicles.");
+                
+                logger.info("I2V Control Plane: Pushing rerouting instructions to Infrastructure-City...");
+                orchestrator.solve("Infrastructure-City", new String[]{"I2V-TrafficAlert"}, policy);
+                
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "VANET: V2X loop successfully closed.");
                 break;
             default:
                 logger.error("Unknown Case Study: {}", caseNum);

@@ -77,7 +77,7 @@ SD-CPS includes an automated suite to verify 10 critical research case studies. 
 7. **Empirical Validation**: (SDS 2017 & 2019)
 8. **Chaos Engineering**: (SDS 2017)
 9. **Privacy-by-Design**: Integrated PII masking.
-10. **Unit Testing**: 100% logic coverage.
+10. **VANET V2X Deployment**: Prototypical VANET with V2V, V2I, and I2V communications (`./run_vanet_demo.sh`).
 
 ## Citing SD-CPS
 If you use SD-CPS in your research, please cite the following papers:
