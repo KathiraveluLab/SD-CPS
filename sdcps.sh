@@ -12,6 +12,7 @@ function print_usage() {
     echo "  interactive     Start interactive simulation mode"
     echo "  verify          Run the automated parity verification script"
     echo "  dashboard       Open the Research Dashboard in the browser"
+    echo "  broker          Start an ActiveMQ Artemis broker (Docker required)"
     echo "  help            Show this help message"
     echo ""
     echo "Options for 'run':"
@@ -44,6 +45,17 @@ case "$1" in
         else
             echo "Please open dashboard.html manually in your browser."
         fi
+        ;;
+    broker)
+        if ! command -v docker &> /dev/null; then
+            echo "Error: Docker is not installed."
+            exit 1
+        fi
+        echo "Starting ActiveMQ Artemis Broker on port 5672..."
+        docker run -d --name sdcps-broker --rm -p 5672:5672 -p 8161:8161 \
+            -e ARTEMIS_USER=admin -e ARTEMIS_PASSWORD=password \
+            apache/activemq-artemis
+        echo "Broker is starting. Web console available at: http://localhost:8161"
         ;;
     help|--help|-h)
         print_usage

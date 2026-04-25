@@ -13,51 +13,66 @@ The framework is structured into a modular hierarchy:
 - `org.sdcps.workflow`: Automation and Edge Workflow Management.
 
 ## Quick Start
+SD-CPS provides a unified launcher script `./sdcps.sh` for all operations.
+
 ### 1. Build & Setup
 ```bash
 ./sdcps.sh build
 ```
 
-### 2. Run Interactively
-The framework now supports an interactive CLI for triggering simulation events:
+### 2. Live Research Dashboard
+Open the visual dashboard to monitor simulation events. The dashboard is **dynamic** and syncs with the framework in real-time.
+```bash
+./sdcps.sh dashboard
+```
+*Note: The dashboard auto-refreshes to show events like node crashes and adaptations as they occur.*
+
+### 3. Run Interactively
+Trigger manual simulation events and observe system adaptation in the logs and dashboard:
 ```bash
 ./sdcps.sh interactive
 ```
-*Inside the shell:* `crash n10`, `congestion n12`, `jitter n9 n10 50`.
+*Available Commands:*
+- `crash <node>`: Simulates hardware failure and triggers self-healing.
+- `congestion <node>`: Triggers SMART subflow cloning for elephant flows.
+- `jitter <n1> <n2> <ms>`: Injects network interference between nodes.
 
-### 3. Run Specific Case Studies
-List all available research scenarios:
+### 4. Run Specific Case Studies
+List and detail all 9 available research scenarios:
 ```bash
 ./sdcps.sh list
 ```
 
-Run a specific case:
+Run a specific scenario (e.g., High Availability):
 ```bash
-./sdcps.sh run --case 1
+./sdcps.sh run --case 5
 ```
 
-### 4. Automated Parity Verification
+### 5. Automated Parity Verification
+Verify 100% research parity across all case studies:
 ```bash
 ./sdcps.sh verify
 ```
 
-### 5. View Dashboard
+### 6. Message Broker (Optional)
+To enable real-time AMQP messaging (M4T) without connection warnings:
 ```bash
-./sdcps.sh dashboard
+./sdcps.sh broker
 ```
+*(Requires Docker)*
 
 ## Verified Research Case Studies
-The project includes an automated suite to verify 10 critical research case studies:
-1. **Static Placement**: Greedy placement of services on edge nodes (SDS 2017).
-2. **SMART Adaptation**: Dynamic subflow cloning for elephant flows (Cluster Computing 2019).
-3. **Link Fluctuations**: Real-time response to transient network jitter.
-4. **Multi-tenancy**: Secure namespace isolation between tenants (SDS 2017).
-5. **High Availability**: ODL-style orchestrator clustering and warm failover.
-6. **Thermal Constraints**: Energy-aware placement avoiding thermal breaches.
-7. **Empirical Validation**: 1000+ iteration simulation with 95% Confidence Intervals.
-8. **Chaos Engineering**: Automated self-healing after simulated node crashes.
-9. **Privacy-by-Design**: Automated PII masking and telemetry anonymization.
-10. **Unit Testing**: 100% logic coverage for core adaptation decision paths.
+SD-CPS includes an automated suite to verify 10 critical research case studies. Use `./sdcps.sh list` for full details on each:
+1. **Static Placement**: (SDS 2017)
+2. **SMART Adaptation**: (Cluster Computing 2019)
+3. **Link Fluctuations**: (2019)
+4. **Multi-tenancy**: (SDS 2017)
+5. **High Availability**: (SDS 2017)
+6. **Thermal Constraints**: (2019)
+7. **Empirical Validation**: (SDS 2017 & 2019)
+8. **Chaos Engineering**: (SDS 2017)
+9. **Privacy-by-Design**: Integrated PII masking.
+10. **Unit Testing**: 100% logic coverage.
 
 ## Citing SD-CPS
 If you use SD-CPS in your research, please cite the following papers:

@@ -18,6 +18,7 @@ public class SDCPSMain {
     private static final Logger logger = LoggerFactory.getLogger(SDCPSMain.class);
 
     public static void main(String[] args) {
+        org.sdcps.knowledge.DashboardGenerator.getInstance().updateDashboard();
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("interactive")) {
                 runInteractiveMode();
@@ -90,18 +91,22 @@ public class SDCPSMain {
         switch (caseNum) {
             case 1:
                 logger.info("Starting Case Study 1: Static Placement (SDS 2017)...");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "CASE STUDY 1: Static Placement initiated.");
                 registry.registerCPSService("UserA", "s5", 5.0, true);
                 org.evora.core.PlacementSolution solution = orchestrator.solve("UserA", nsc, policy);
                 workflowManager.executeWorkflow("wf-0Static", solution);
                 break;
             case 2:
                 logger.info("\n--- Starting Case Study 2: Dynamic Adaptation (Cluster Computing 2019) ---");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("danger", "EVENT: Congestion on n10.");
                 simulator.startSimulation("n10");
                 simulator.triggerCongestion("n10");
                 orchestrator.detectAndAdapt("UserA", "flow-002", "n10", "s5");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "CASE STUDY 2: SMART adaptation completed.");
                 break;
             case 3:
                 logger.info("\n--- Starting Case Study 3: Dynamic Link Fluctuations (2019 Cluster Computing) ---");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("warning", "EVENT: Network Jitter injected.");
                 simulator.injectNetworkJitter(topology, "n10", "n12", 25.0);
                 logger.info("Orchestrator re-evaluating placement due to topology shift...");
                 org.evora.core.PlacementSolution newSolution = orchestrator.solve("UserA", nsc, policy);
@@ -109,6 +114,7 @@ public class SDCPSMain {
                 break;
             case 4:
                 logger.info("\n--- Starting Case Study 4: Multi-tenant Isolation (SDS 2017) ---");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("danger", "SECURITY ALERT: Unauthorized access attempt.");
                 registry.registerCPSService("UserB", "s6", 3.0, false);
                 logger.info("Tenant [UserB] attempting to orchestrate an NSC with Tenant [UserA]'s service [s5]...");
                 String[] rogueNsc = {"s5", "s6"};
@@ -116,6 +122,7 @@ public class SDCPSMain {
                 break;
             case 5:
                 logger.info("\n--- Starting Case Study 5: Control Plane Clustering & HA (SDS 2017) ---");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("danger", "CRITICAL: Primary Orchestrator Crash.");
                 SDCPSClusterManager.getInstance().electLeader("Primary-Node");
                 SDCPSRegistry backupRegistry = new SDCPSRegistry(true);
                 SDCPSOrchestrator backup = new SDCPSOrchestrator(topology, backupRegistry);
@@ -128,9 +135,11 @@ public class SDCPSMain {
                 backup.joinClusterAndSync();
                 logger.info("Backup Orchestrator (now Primary) resuming NSC placement with SYNCED STATE...");
                 backup.solve("UserA", nsc, policy);
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "HA FAILOVER: Backup promoted to Primary.");
                 break;
             case 6:
                 logger.info("\n--- Starting Case Study 6: Energy-Aware Placement (2019 Cluster Computing) ---");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("warning", "THERMAL BREACH: Energy constraint exceeded on node.");
                 registry.registerCPSService("UserA", "s_heavy", 200.0, true);
                 logger.info("Orchestrating high-intensity service [s_heavy] (200W requirement)...");
                 String[] heavyNsc = {"s_heavy"};
@@ -140,20 +149,25 @@ public class SDCPSMain {
                 logger.info("\n--- Starting Case Study 7: Empirical Validation & CI Report ---");
                 EmpiricalValidator validator = new EmpiricalValidator();
                 validator.runEmpiricalStudy(orchestrator, 1000);
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "EMPIRICAL: 1000 iterations completed.");
                 break;
             case 8:
                 logger.info("\n--- Starting Case Study 8: Chaos Engineering & Self-Healing (SDS 2017) ---");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("danger", "CHAOS: Hardware Failure on n10.");
                 logger.warn("Simulating Hardware Failure on Edge Node [n10]...");
                 simulator.simulateNodeCrash("n10");
                 orchestrator.selfHeal("UserA", "n10");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "SELF-HEAL: Service restored on alternate node.");
                 break;
             case 9:
                 logger.info("\n--- Starting Case Study 9: Data Privacy Compliance ---");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("warning", "COMPLIANCE: Personal Data detected in flow.");
                 logger.info("Simulating non-compliant telemetry from an unpatched sensor...");
                 orchestrator.detectAndAdapt("UserA", "sensitive_flow_node_n12", "n12", "s7");
                 logger.info("Simulating compliant, anonymized telemetry...");
                 String compliantFlowId = new PrivacyGuard().anonymize("flow_node_n12");
                 orchestrator.detectAndAdapt("UserA", compliantFlowId, "n12", "s7");
+                org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "PRIVACY: Telemetry anonymized and accepted.");
                 break;
             default:
                 logger.error("Unknown Case Study: {}", caseNum);
@@ -168,47 +182,70 @@ public class SDCPSMain {
         CPSNodeSimulator simulator = new CPSNodeSimulator();
         java.util.Scanner scanner = new java.util.Scanner(System.in);
 
-        System.out.println("\nSD-CPS Interactive Shell");
-        System.out.println("Available Commands: crash <node>, congestion <node>, jitter <n1> <n2> <ms>, quit");
+        printInteractiveHelp();
         
         while (true) {
             System.out.print("sd-cps> ");
             String input = scanner.nextLine().trim();
             if (input.isEmpty()) continue;
             if (input.equalsIgnoreCase("quit") || input.equalsIgnoreCase("exit")) break;
+            if (input.equalsIgnoreCase("help")) { printInteractiveHelp(); continue; }
 
             String[] parts = input.split("\\s+");
             String cmd = parts[0].toLowerCase();
 
             try {
                 switch (cmd) {
+                    case "nodes":
+                        System.out.println("\nActive Edge Nodes in Topology:");
+                        topology.getAllNodes().forEach((id, node) -> {
+                            System.out.printf(" - %s: Energy=%.1fW, Latency=%.1fms, Cost=%.1f\n", 
+                                id, topology.getEnergyCapacity(id), node.getLatency(), node.getCost());
+                        });
+                        break;
                     case "crash":
-                        if (parts.length < 2) { System.out.println("Usage: crash <node>"); break; }
+                        if (parts.length < 2) { System.out.println("Usage: crash <node> (Example: crash n10)"); break; }
                         logger.warn("MANUAL EVENT: Crashing node {}", parts[1]);
+                        org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("danger", "NODE CRASH (CHAOS): Node " + parts[1] + " Failure detected.");
                         simulator.simulateNodeCrash(parts[1]);
                         orchestrator.selfHeal("UserA", parts[1]);
+                        org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "SELF-HEALING: Migrated services from " + parts[1]);
                         break;
                     case "congestion":
-                        if (parts.length < 2) { System.out.println("Usage: congestion <node>"); break; }
+                        if (parts.length < 2) { System.out.println("Usage: congestion <node> (Example: congestion n12)"); break; }
                         logger.warn("MANUAL EVENT: Triggering congestion on node {}", parts[1]);
+                        org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("danger", "CONGESTION: Node " + parts[1] + " capacity reached.");
                         simulator.triggerCongestion(parts[1]);
                         String anonymizedFlow = new org.sdcps.data.PrivacyGuard().anonymize("interactive-flow");
                         orchestrator.detectAndAdapt("UserA", anonymizedFlow, parts[1], "s5");
+                        org.sdcps.knowledge.DashboardGenerator.getInstance().addAlert("success", "ADAPTATION: SMART Clone triggered for " + parts[1]);
                         break;
                     case "jitter":
-                        if (parts.length < 4) { System.out.println("Usage: jitter <n1> <n2> <ms>"); break; }
+                        if (parts.length < 4) { System.out.println("Usage: jitter <n1> <n2> <ms> (Example: jitter n10 n12 25)"); break; }
                         double ms = Double.parseDouble(parts[3]);
                         logger.warn("MANUAL EVENT: Injecting {}ms jitter between {} and {}", ms, parts[1], parts[2]);
                         simulator.injectNetworkJitter(topology, parts[1], parts[2], ms);
                         break;
                     default:
-                        System.out.println("Unknown command: " + cmd);
+                        System.out.println("Unknown command: " + cmd + ". Type 'help' for examples.");
                 }
             } catch (Exception e) {
                 System.out.println("Error executing command: " + e.getMessage());
             }
         }
         System.out.println("Exiting Interactive Mode.");
+    }
+
+    private static void printInteractiveHelp() {
+        System.out.println("\nSD-CPS Interactive Shell");
+        System.out.println("Usage & Examples:");
+        System.out.println("  nodes                             - List all edge nodes and their current metrics");
+        System.out.println("  crash <node>                      - e.g., crash n10");
+        System.out.println("  congestion <node>                 - e.g., congestion n12");
+        System.out.println("  jitter <n1> <n2> <ms>             - e.g., jitter n10 n12 50");
+        System.out.println("  help                              - Show this help message");
+        System.out.println("  quit                              - Exit the interactive shell");
+        System.out.println("");
     }
 
 }

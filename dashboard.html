@@ -186,41 +186,32 @@
             <div class="col-lg-4">
                 <div class="glass-card">
                     <h5 class="header-title mb-4">LIVE RESEARCH ALERTS</h5>
-                    <div class="alert-feed">
-                        <div class="alert-item">
-                            <strong class="text-danger">THERMAL BREACH</strong><br>
-                            <small class="text-muted">Node n10 capacity 30W < s_heavy 200W</small>
-                        </div>
-                        <div class="alert-item">
-                            <strong class="text-danger">SECURITY BREACH</strong><br>
-                            <small class="text-muted">UserB attempted access to UserA:s5</small>
-                        </div>
-                        <div class="success-item">
-                            <strong class="text-success">FAILOVER COMPLETED</strong><br>
-                            <small class="text-muted">Backup Orchestrator promoted to Primary</small>
-                        </div>
-                        <div class="success-item">
-                            <strong class="text-success">ADAPTATION TRIGGERED</strong><br>
-                            <small class="text-muted">SMART: CLONE s5 due to n10 congestion</small>
-                        </div>
-                        <div class="alert-item">
-                            <strong class="text-danger">NODE CRASH (CHAOS)</strong><br>
-                            <small class="text-muted">Edge Node n10 HA Failure detected</small>
-                        </div>
-                        <div class="success-item">
-                            <strong class="text-success">SELF-HEALING SUCCESS</strong><br>
-                            <small class="text-muted">Migrated affected s5 from n10 to healthy node</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        SD-CPS Framework | Research Parity SDS 2017 & Cluster Computing 2019 | KathiraveluLab
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="dashboard_data.js"></script>
+    <script>
+        function updateDashboardUI() {
+            if (typeof dashboardData !== 'undefined') {
+                document.getElementById('nodeCount').innerText = dashboardData.nodeCount;
+                document.getElementById('uptime').innerText = dashboardData.uptime;
+                const statusBadge = document.querySelector('.badge');
+                if (statusBadge && dashboardData.lastUpdate) {
+                    statusBadge.innerText = 'SYNCED: ' + dashboardData.lastUpdate;
+                    statusBadge.classList.replace('bg-danger', 'bg-success');
+                }
+                const alertFeed = document.querySelector('.alert-feed');
+                if (alertFeed && dashboardData.alerts) {
+                    alertFeed.innerHTML = dashboardData.alerts.join('');
+                }
+            }
+        }
+        // Initial load
+        window.onload = updateDashboardUI;
+        // Check for updates every 2 seconds (in case of manual file refresh)
+        setInterval(() => {
+            const script = document.createElement('script');
+            script.src = 'dashboard_data.js?t=' + new Date().getTime();
+            document.head.appendChild(script);
+        }, 2000);
+    </script>
 </body>
 </html>
