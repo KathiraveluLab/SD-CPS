@@ -3,12 +3,12 @@
   { "id": "n6",  "neighbors": ["n9", "n7"], "services": ["s2", "s3", "S4"], "cost": 15.0, "latency": 3.0, "energy": 50.0, "resources": 200.0 },
   { "id": "n7",  "neighbors": ["n6", "n8"], "services": ["s3", "S1"], "cost": 8.0, "latency": 6.0, "energy": 150.0, "resources": 80.0 },
   { "id": "n8",  "neighbors": ["n7", "n10"], "services": ["s2"], "cost": 10.0, "latency": 5.0, "energy": 120.0, "resources": 100.0 },
-  { "id": "n10", "neighbors": ["n8", "n11", "n12"], "services": ["s5", "s_heavy"], "cost": 20.0, "latency": 2.0, "energy": 30.0, "resources": 300.0 },
+  { "id": "n10", "neighbors": ["n8", "n11", "n12"], "services": ["s5", "s_heavy", "I2V-TrafficAlert"], "cost": 20.0, "latency": 2.0, "energy": 30.0, "resources": 300.0 },
   { "id": "n11", "neighbors": ["n10", "n12", "n13"], "services": ["s1"], "cost": 14.0, "latency": 4.0, "energy": 80.0, "resources": 120.0 },
-  { "id": "n12", "neighbors": ["n10", "n11"], "services": ["s3", "s4"], "cost": 11.0, "latency": 4.5, "energy": 90.0, "resources": 110.0 },
+  { "id": "n12", "neighbors": ["n10", "n11"], "services": ["s3", "s4", "V2V-Safety"], "cost": 11.0, "latency": 4.5, "energy": 90.0, "resources": 110.0 },
   { "id": "n13", "neighbors": ["n11", "n15"], "services": ["s2"], "cost": 9.0, "latency": 5.5, "energy": 110.0, "resources": 90.0 },
-  { "id": "n15", "neighbors": ["n13", "n14", "n16", "n17"], "services": ["s1"], "cost": 18.0, "latency": 2.5, "energy": 70.0, "resources": 250.0 },
+  { "id": "n15", "neighbors": ["n13", "n14", "n16", "n17"], "services": ["s1", "V2I-Telemetry"], "cost": 18.0, "latency": 2.5, "energy": 70.0, "resources": 250.0 },
   { "id": "n14", "neighbors": ["n15"], "services": ["s2"], "cost": 7.0, "latency": 7.0, "energy": 130.0, "resources": 70.0 },
   { "id": "n17", "neighbors": ["n15"], "services": ["s2"], "cost": 10.0, "latency": 5.0, "energy": 140.0, "resources": 100.0 },
-  { "id": "n16", "neighbors": ["n15"], "services": ["s3", "s4"], "cost": 13.0, "latency": 3.5, "energy": 160.0, "resources": 140.0 }
+  { "id": "n16", "neighbors": ["n15"], "services": ["s3", "s4", "V2V-Safety"], "cost": 13.0, "latency": 3.5, "energy": 160.0, "resources": 140.0 }
 ]

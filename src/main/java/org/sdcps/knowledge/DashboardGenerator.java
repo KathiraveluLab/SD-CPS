@@ -33,7 +33,11 @@ public class DashboardGenerator {
         alerts.add("<div class='success-item'><strong>SYSTEM BOOTSTRAP</strong><br><small>SD-CPS Framework initialized.</small></div>");
         
         // Background Probe for M4T Broker
-        java.util.concurrent.Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+        java.util.concurrent.Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r);
+            t.setDaemon(true);
+            return t;
+        }).scheduleAtFixedRate(() -> {
             try (java.net.Socket socket = new java.net.Socket()) {
                 socket.connect(new java.net.InetSocketAddress("localhost", 5672), 100);
                 this.updateBrokerStatus(true);

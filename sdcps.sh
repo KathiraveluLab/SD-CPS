@@ -17,7 +17,7 @@ function print_usage() {
     echo "  help            Show this help message"
     echo ""
     echo "Options for 'run':"
-    echo "  --case <N>      Run a specific case study (1-9)"
+    echo "  --case <N>      Run a specific case study (1-10)"
 }
 
 case "$1" in

@@ -48,7 +48,7 @@ public class SDCPSMain {
         System.out.println("  java -jar sdcps.jar [options]");
         System.out.println("Options:");
         System.out.println("  interactive     Start interactive simulation mode");
-        System.out.println("  --case <N>      Run a specific case study (1-9)");
+        System.out.println("  --case <N>      Run a specific case study (1-10)");
         System.out.println("  --list          List and detail all available case studies");
         System.out.println("  --help          Print this help message");
         System.out.println("  (no args)       Run all case studies in sequence (standard parity run)");
@@ -71,7 +71,7 @@ public class SDCPSMain {
     }
 
     private static void runAllCaseStudies() {
-        for (int i = 1; i <= 9; i++) {
+        for (int i = 1; i <= 10; i++) {
             runCaseStudy(i);
         }
         logger.info("\nExporting Dashboard state to dashboard.html...");

@@ -44,6 +44,29 @@ Each node in the JSON array supports the following parameters:
 
 Changes made to this file take effect upon the next framework launch.
 
+### 2.1 Advanced Configuration for Case Studies
+
+Certain research scenarios require specific services to be present in the topology for the orchestrator to resolve placement. For example, the **VANET V2X Deployment** needs nodes that are capable of hosting V2X services.
+
+#### Case Study Requirements:
+- **Case 10 (VANET)**: Requires `V2V-Safety`, `V2I-Telemetry`, and `I2V-TrafficAlert`.
+
+#### Example: Updating `topology.json` for VANET
+```json
+ { 
+   "id": "n15", 
+   "neighbors": ["n13"], 
+   "services": ["s1", "V2I-Telemetry"], 
+   "energy": 70.0 
+ },
+ { 
+   "id": "n10", 
+   "services": ["s5", "I2V-TrafficAlert"], 
+   "energy": 30.0 
+ }
+```
+If a required service is missing from all nodes in `topology.json`, the orchestrator will log a `CRITICAL` error and the simulation may stall.
+
 ---
 
 ## 3. Live Research Dashboard
