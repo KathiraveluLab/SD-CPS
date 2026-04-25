@@ -1,5 +1,4 @@
-# SD-CPS
-Software-Defined Cyber-Physical Systems
+# SD-CPS: Software-Defined Cyber-Physical Systems
 
 SD-CPS is a research framework for orchestrating and managing Industrial Edge Cyber-Physical Systems (CPS) using a software-defined approach. It implements advanced features like SMART adaptation, control plane high-availability, chaos engineering, and privacy-by-design.
 
