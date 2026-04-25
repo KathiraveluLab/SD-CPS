@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="30">
     <title>SD-CPS Research Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -186,6 +187,18 @@
             <div class="col-lg-4">
                 <div class="glass-card">
                     <h5 class="header-title mb-4">LIVE RESEARCH ALERTS</h5>
+                    <div class="alert-feed">
+                        <!-- Dynamic alerts will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        SD-CPS Framework | Research Parity SDS 2017 & Cluster Computing 2019 | KathiraveluLab
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="dashboard_data.js"></script>
     <script>
@@ -204,14 +217,14 @@
                 }
             }
         }
+
         // Initial load
         window.onload = updateDashboardUI;
-        // Check for updates every 2 seconds (in case of manual file refresh)
-        setInterval(() => {
-            const script = document.createElement('script');
-            script.src = 'dashboard_data.js?t=' + new Date().getTime();
-            document.head.appendChild(script);
-        }, 2000);
+
+        // Force a page reload every 5 seconds to bypass local file security blocks
+        setTimeout(() => {
+            location.reload();
+        }, 5000);
     </script>
 </body>
 </html>

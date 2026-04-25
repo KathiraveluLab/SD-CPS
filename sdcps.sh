@@ -39,9 +39,9 @@ case "$1" in
         ;;
     dashboard)
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-            xdg-open dashboard.html
+            xdg-open dashboard.html &> /dev/null &
         elif [[ "$OSTYPE" == "darwin"* ]]; then
-            open dashboard.html
+            open dashboard.html &> /dev/null
         else
             echo "Please open dashboard.html manually in your browser."
         fi
