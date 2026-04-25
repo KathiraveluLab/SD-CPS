@@ -36,7 +36,7 @@ The dashboard provides real-time observability into the simulation state. It aut
 
 ### Sections
 1. **Key Metrics**:
-    - **Active Nodes**: Total nodes currently operational (out of 12).
+    - **Active Nodes**: Total nodes currently operational in your topology. The framework supports dynamic scaling (the default is a 12-node topology. But more nodes can be added or removed from the topology using the `addnode` and `crash` commands in the interactive shell).
     - **Research Case Studies**: Progress of automated research trials.
     - **Tenant Isolation**: Status of the multi-tenant namespace partitioner.
     - **System Uptime**: Live HA status (dips during orchestrator crashes).

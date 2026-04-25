@@ -81,11 +81,14 @@ public class DashboardGenerator {
 
     public void updateDashboard() {
         try (PrintWriter out = new PrintWriter(new FileWriter("dashboard_data.js"))) {
+            long activeCount = nodeStatuses.values().stream()
+                .filter(s -> !s.equals("CRASHED"))
+                .count();
             long tenantCount = services.stream().map(s -> s.tenant).distinct().count();
             String isolationStr = tenantCount <= 1 ? "ACTIVE" : tenantCount + " NAMESPACES";
             
             out.println("const dashboardData = {");
-            out.println("  nodeCount: " + nodeStatuses.size() + ",");
+            out.println("  nodeCount: " + activeCount + ",");
             out.println("  uptime: \"" + systemUptime + "\",");
             out.println("  tenantStatus: \"" + isolationStr + "\",");
             out.println("  brokerStatus: \"" + brokerStatus + "\",");
