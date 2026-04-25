@@ -30,7 +30,7 @@ public class DashboardGenerator {
     private DashboardGenerator() {
         // Initialize nodes with default status
         for (int i = 6; i <= 17; i++) nodeStatuses.put("n" + i, "NORMAL");
-        alerts.add("<div class='success-item'><strong>SYSTEM BOOTSTRAP</strong><br><small>SD-CPS Research Framework initialized.</small></div>");
+        alerts.add("<div class='success-item'><strong>SYSTEM BOOTSTRAP</strong><br><small>SD-CPS Framework initialized.</small></div>");
         
         // Background Probe for M4T Broker
         java.util.concurrent.Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Main entry point for the SD-CPS Research Framework.
+ * Main entry point for the SD-CPS Framework.
  * Integrates Messaging4Transport, Evora, SENDIM, and SMART.
  */
 public class SDCPSMain {
@@ -43,19 +43,19 @@ public class SDCPSMain {
     }
 
     private static void printHelp() {
-        System.out.println("SD-CPS Research Framework CLI");
+        System.out.println("SD-CPS Framework CLI");
         System.out.println("Usage:");
         System.out.println("  java -jar sdcps.jar [options]");
         System.out.println("Options:");
         System.out.println("  interactive     Start interactive simulation mode");
-        System.out.println("  --case <N>      Run a specific research case study (1-9)");
+        System.out.println("  --case <N>      Run a specific case study (1-9)");
         System.out.println("  --list          List and detail all available case studies");
         System.out.println("  --help          Print this help message");
         System.out.println("  (no args)       Run all case studies in sequence (standard parity run)");
     }
 
     private static void printCaseStudies() {
-        System.out.println("\nAvailable Research Case Studies:");
+        System.out.println("\nAvailable Case Studies:");
         System.out.println("--------------------------------");
         System.out.println("1. Static Placement (SDS 2017): Greedy placement of services on edge nodes.");
         System.out.println("2. SMART Adaptation (2019): Dynamic subflow cloning for elephant flows.");
@@ -73,9 +73,9 @@ public class SDCPSMain {
         for (int i = 1; i <= 9; i++) {
             runCaseStudy(i);
         }
-        logger.info("\nExporting Research Dashboard state to dashboard.html...");
-        logger.info("Dashboard successfully updated with 12-node topology and 8 Case Studies.");
-        logger.info("\nSD-CPS Research Framework fully bootstrapped and operational.");
+        logger.info("\nExporting Dashboard state to dashboard.html...");
+        logger.info("Dashboard successfully updated with experimental results.");
+        logger.info("\nSD-CPS Framework fully bootstrapped and operational.");
     }
 
     private static void runCaseStudy(int caseNum) {
