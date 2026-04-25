@@ -13,23 +13,37 @@ The framework is structured into a modular hierarchy:
 - `org.sdcps.workflow`: Automation and Edge Workflow Management.
 
 ## Quick Start
-### Prerequisites
-- Java 21+
-- Maven 3.8+
-
-### 1. Build the System
+### 1. Build & Setup
 ```bash
-mvn clean install
+./sdcps.sh build
 ```
 
-### 2. Run the Research Suite
+### 2. Run Interactively
+The framework now supports an interactive CLI for triggering simulation events:
 ```bash
-mvn exec:java -Dexec.mainClass="org.sdcps.SDCPSMain"
+./sdcps.sh interactive
+```
+*Inside the shell:* `crash n10`, `congestion n12`, `jitter n9 n10 50`.
+
+### 3. Run Specific Case Studies
+List all available research scenarios:
+```bash
+./sdcps.sh list
 ```
 
-### 3. Automated Parity Verification
+Run a specific case:
 ```bash
-/bin/bash ./verify_parity.sh
+./sdcps.sh run --case 1
+```
+
+### 4. Automated Parity Verification
+```bash
+./sdcps.sh verify
+```
+
+### 5. View Dashboard
+```bash
+./sdcps.sh dashboard
 ```
 
 ## Verified Research Case Studies
