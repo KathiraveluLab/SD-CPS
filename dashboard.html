@@ -21,6 +21,8 @@
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             background-image: radial-gradient(circle at 50% 50%, #1a1b25 0%, #0a0b10 100%);
+            min-height: 100vh;
+            padding-bottom: 60px;
         }
         .glass-card {
             background: var(--glass);
@@ -130,16 +132,8 @@
             <div class="col-lg-8">
                 <div class="glass-card mb-4">
                     <h5 class="header-title mb-4">INDUSTRIAL EDGE TOPOLOGY</h5>
-                    <div class="topology-map d-flex flex-wrap align-content-center justify-content-center">
-                        <!-- Simulated Nodes -->
-                        <div class="node-pill">n9: 100W</div>
-                        <div class="node-pill text-danger">n6: 50W (HOT)</div>
-                        <div class="node-pill">n7: 150W</div>
-                        <div class="node-pill">n8: 120W</div>
-                        <div class="node-pill text-danger">n10: 30W (LOW)</div>
-                        <div class="node-pill">n11: 80W</div>
-                        <div class="node-pill">n12: 90W</div>
-                        <div class="node-pill">n13: 110W</div>
+                    <div id="topologyMap" class="topology-map d-flex flex-wrap align-content-center justify-content-center">
+                        <!-- Dynamic Nodes appear here -->
                     </div>
                 </div>
                 <div class="glass-card">
@@ -155,28 +149,8 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>UserA</td>
-                                    <td>s5</td>
-                                    <td>5.0W</td>
-                                    <td>YES</td>
-                                    <td><span class="text-success">ORCHESTRATED</span></td>
-                                </tr>
-                                <tr>
-                                    <td>UserA</td>
-                                    <td>s_heavy</td>
-                                    <td>200.0W</td>
-                                    <td>YES</td>
-                                    <td><span class="text-danger">BLOCKED (THERMAL)</span></td>
-                                </tr>
-                                <tr>
-                                    <td>UserB</td>
-                                    <td>s6</td>
-                                    <td>3.0W</td>
-                                    <td>NO</td>
-                                    <td><span class="text-success">ORCHESTRATED</span></td>
-                                </tr>
+                            <tbody id="serviceRegistry">
+                                <!-- Dynamic services appear here -->
                             </tbody>
                         </table>
                     </div>
@@ -195,9 +169,6 @@
         </div>
     </div>
 
-    <footer>
-        SD-CPS Framework | Research Parity SDS 2017 & Cluster Computing 2019 | KathiraveluLab
-    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="dashboard_data.js"></script>
@@ -214,6 +185,42 @@
                 const alertFeed = document.querySelector('.alert-feed');
                 if (alertFeed && dashboardData.alerts) {
                     alertFeed.innerHTML = dashboardData.alerts.join('');
+                }
+
+                // Render Topology Map
+                const topologyMap = document.getElementById('topologyMap');
+                if (topologyMap && dashboardData.nodeStatuses) {
+                    topologyMap.innerHTML = '';
+                    for (const [nodeId, status] of Object.entries(dashboardData.nodeStatuses)) {
+                        const pill = document.createElement('div');
+                        pill.className = 'node-pill';
+                        if (status === 'HOT' || status === 'CRASHED') {
+                            pill.classList.add('text-danger');
+                            pill.innerText = `${nodeId}: (${status})`;
+                        } else {
+                            pill.innerText = `${nodeId}: OK`;
+                        }
+                        topologyMap.appendChild(pill);
+                    }
+                }
+
+                // Render Service Registry Table
+                const serviceTable = document.getElementById('serviceRegistry');
+                if (serviceTable && dashboardData.services) {
+                    serviceTable.innerHTML = '';
+                    dashboardData.services.forEach(s => {
+                        const row = document.createElement('tr');
+                        const statusClass = s.status.includes('ORCHESTRATED') ? 'text-success' : 
+                                           (s.status.includes('REGISTERED') ? 'text-info' : 'text-danger');
+                        row.innerHTML = `
+                            <td>${s.tenant}</td>
+                            <td>${s.service}</td>
+                            <td>${s.energy}</td>
+                            <td>${s.realTime}</td>
+                            <td><span class="${statusClass}">${s.status}</span></td>
+                        `;
+                        serviceTable.appendChild(row);
+                    });
                 }
             }
         }

@@ -40,6 +40,9 @@ public class SDCPSRegistry {
         tenantMetadataMap.computeIfAbsent(tenantId, k -> new HashMap<>())
                 .put(serviceId, new CPSMetadata(energyConstraint, isRealTime));
         
+        // Update Research Dashboard
+        org.sdcps.knowledge.DashboardGenerator.getInstance().updateService(tenantId, serviceId, energyConstraint, isRealTime, "REGISTERED");
+
         // Push update to the cluster for replication
         SDCPSClusterManager.getInstance().replicateState(tenantId, tenantMetadataMap.get(tenantId));
     }

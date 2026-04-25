@@ -38,6 +38,7 @@ public class CPSNodeSimulator {
      */
     public void triggerCongestion(String nodeId) {
         logger.info("Triggering adaptive congestion on [{}].", nodeId);
+        org.sdcps.knowledge.DashboardGenerator.getInstance().updateNodeStatus(nodeId, "HOT");
         
         M4TPublisher publisher = new M4TPublisher();
         String message = "Congestion detected on edge node " + nodeId;
@@ -64,6 +65,7 @@ public class CPSNodeSimulator {
      */
     public void simulateNodeCrash(String nodeId) {
         logger.error("CRITICAL NODE FAILURE: Node [{}] has CRASHED (Hardware Failure).", nodeId);
+        org.sdcps.knowledge.DashboardGenerator.getInstance().updateNodeStatus(nodeId, "CRASHED");
         
         M4TPublisher publisher = new M4TPublisher();
         String message = "NODE_CRASH_EVENT: " + nodeId;

@@ -117,11 +117,14 @@ public class SDCPSOrchestrator {
                 if (nodeEnergy < metadata.getEnergyConstraint()) {
                     logger.error("THERMAL BREACH: Node {} energy capacity ({}W) is insufficient for service {} ({}W). Placement is UNSAFE.", 
                             nodeId, nodeEnergy, serviceId, metadata.getEnergyConstraint());
+                    org.sdcps.knowledge.DashboardGenerator.getInstance().updateService(tenantId, serviceId, metadata.getEnergyConstraint(), metadata.isRealTime(), "BLOCKED (THERMAL)");
                 } else {
                     logger.info("Energy recovery check passed for {} on Node {} ({}W available).", serviceId, nodeId, nodeEnergy);
+                    org.sdcps.knowledge.DashboardGenerator.getInstance().updateService(tenantId, serviceId, metadata.getEnergyConstraint(), metadata.isRealTime(), "ORCHESTRATED");
                 }
             } else {
                 logger.warn("SECURITY BREACH: Tenant [{}] attempted to use unauthorized service [{}]", tenantId, serviceId);
+                org.sdcps.knowledge.DashboardGenerator.getInstance().updateService(tenantId, serviceId, 0, false, "UNAUTHORIZED");
             }
         }
     }
