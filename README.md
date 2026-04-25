@@ -40,10 +40,7 @@ Trigger manual simulation events and observe system adaptation in the logs and d
 
 ### Documentation
 See the [USER-GUIDE.md](USER-GUIDE.md) for a full command reference and research dashboard walkthrough.
-*Available Commands:*
-- `crash <node>`: Simulates hardware failure and triggers self-healing.
-- `congestion <node>`: Triggers SMART subflow cloning for elephant flows.
-- `jitter <n1> <n2> <ms>`: Injects network interference between nodes.
+For developers looking to extend the framework or integrate with **OpenDaylight**, refer to the [DEV-GUIDE.md](DEV-GUIDE.md).
 
 ### 4. Run Specific Case Studies
 List and detail all 9 available research scenarios:
